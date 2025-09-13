@@ -1,6 +1,6 @@
 # Apex Orchestrator: Raspberry Pi 5-Powered RAG AI Agent
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/picoder?style=social)](https://github.com/yourusername/picoder) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.38.0-orange.svg)](https://streamlit.io/)
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/yourusername/apex-orchestrator) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.38.0-orange.svg)](https://streamlit.io/)
 
 > *Because who needs a data center when your pocket-sized Pi can summon AI overlords? Apex Orchestrator turns your Raspberry Pi 5 into a self-contained RAG (Retrieval-Augmented Generation) powerhouse—chat, code, search, and orchestrate like a boss. Expandable, sandboxed, and nerd-approved. 🚀*
 
@@ -24,8 +24,8 @@ Key highlights:
 ### Installation
 1. Clone the repo:
    ```
-   git clone https://github.com/buckster/Apex-Orchestrator.git
-   cd picoder
+   git clone https://github.com/yourusername/apex-orchestrator.git
+   cd apex-orchestrator
    ```
 
 2. Set up virtual env and deps (Pi-friendly; no heavy installs):
@@ -62,7 +62,7 @@ Key highlights:
 
 4. Fire it up:
    ```
-   streamlit run Apex-Orchestrator.py --server.port 8501
+   streamlit run app.py --server.port 8501
    ```
    Access at `http://raspberrypi.local:8501` (or Pi's IP).
 
@@ -88,7 +88,7 @@ Humor Alert: If you ask it to "commit" bad code, it'll Git it done... with a dif
 
 ## 🏗️ Architecture & Flows
 
-PiCoder's brain is a RAG-enhanced ReAct loop, all local except API calls. Here's the magic in diagrams (Mermaid—GitHub renders 'em natively).
+Apex Orchestrator's brain is a RAG-enhanced ReAct loop, all local except API calls. Here's the magic in diagrams (Mermaid—GitHub renders 'em natively).
 
 ### RAG Flow: Augmenting Generation with Memory
 ```mermaid
@@ -111,7 +111,7 @@ graph TD
 ### ReAct Flow: Reasoning + Acting in Agent Mode
 ```mermaid
 graph LR
-    Q[Query: "Analyze CSV Trends"] --> P[Plan: ToT Decompose<br/>Subtasks: Retrieve → Reason → Generate]
+    Q[Query: Analyze CSV Trends] --> P[Plan: ToT Decompose<br/>Subtasks: Retrieve → Reason → Generate]
     P --> S1[Subagent 1: Retriever<br/>Think: Refine Query<br/>Act: fs_read_file + advanced_memory_retrieve<br/>Observe: Parse Data<br/>Reflect: Relevance Score >0.7?]
     S1 --> S2[Subagent 2: Reasoner<br/>Think: Branch Hypotheses (CoT)<br/>Act: code_execution (NumPy Trends)<br/>Observe: Outputs/Errors<br/>Reflect: Verify w/ Alt Branch]
     S2 --> S3[Subagent 3: Generator<br/>Think: Structure Output<br/>Act: code_lint + fs_write_file (Plot)<br/>Observe: Draft Review<br/>Reflect: Coherent?]
@@ -150,4 +150,4 @@ MIT—use it, tweak it, Pi it.
 
 ---
 
-*Built with ❤️ on a Pi 5. Questions? Ping @AndreBuckingham. May your embeddings cluster tightly and your loops never infinite.*
+*Built with ❤️ on a Pi 5. Questions? Ping @yourhandle. May your embeddings cluster tightly and your loops never infinite.*
