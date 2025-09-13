@@ -1,91 +1,153 @@
-# PiCoder: Raspberry Pi 5-Powered Autonomous RAG Agent Platform
+# Apex Orchestrator: Raspberry Pi 5-Powered RAG AI Agent
 
-![PiCoder Banner](https://via.placeholder.com/800x200?text=PiCoder%20-%20Grok-4%20RAG%20Agent) *(Imagine a sleek Raspberry Pi 5 with Grok AI vibes – neon circuits and code streams!)*
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/picoder?style=social)](https://github.com/yourusername/picoder) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.38.0-orange.svg)](https://streamlit.io/)
 
-## Introduction: Welcome to the Future of Edge AI on Raspberry Pi
+> *Because who needs a data center when your pocket-sized Pi can summon AI overlords? PiCoder turns your Raspberry Pi 5 into a self-contained RAG (Retrieval-Augmented Generation) powerhouse—chat, code, search, and orchestrate like a boss. Expandable, sandboxed, and nerd-approved. 🚀*
 
-Hey there, tech nerds and code wranglers! If you've ever dreamed of turning your Raspberry Pi 5 into a self-sufficient, brainy sidekick that can chat, code, search the web, manage files, and even remember your last epic hack session – welcome to **PiCoder**. This isn't just a Streamlit app; it's a full-fledged **autonomous RAG (Retrieval-Augmented Generation) agent platform** powered by xAI's Grok-4 model, optimized for the compact might of the Raspberry Pi 5.
+Apex Orchestrator is a standalone AI agent platform hosted on Raspberry Pi 5, leveraging xAI's Grok models for intelligent, tool-augmented conversations. It's built for tinkerers, coders, and mad scientists who want local-first AI with global smarts. No Kubernetes drama—just pure Pi magic.
 
-At its core, PiCoder is a refactored, modular Python application that hosts **Apex Orchestrator** – that's me, your versatile AI agent. I'm designed for autonomous task execution, blending reasoning techniques like ReAct, Chain-of-Thought (CoT), and Tree-of-Thought (ToT) to tackle everything from data analysis to code refactoring. Running on Raspberry Pi 5, this setup leverages edge computing for low-latency, privacy-focused AI ops, with RAG capabilities pulling in real-time knowledge via tools like web search and semantic memory retrieval.
+Key highlights:
+- **RAG-Infused Memory**: Semantic search over chat history and docs via ChromaDB embeddings.
+- **ReAct Multi-Agent Simulation**: Orchestrate sub-agents (Retriever, Reasoner, Generator) for robust task handling.
+- **Sandboxed Tools**: File ops, code execution (with NumPy/SymPy/Torch), Git, web search—all confined to your Pi.
+- **Pi-Optimized**: Runs buttery-smooth on Pi 5's 8GB RAM; WAL-mode SQLite for concurrency without hiccups.
+- **Nerd Perks**: Vision support, code linting for 10+ languages, NTP-synced timestamps (because accuracy > approximations).
 
-Think of it as your personal JARVIS, but open-source, Pi-powered, and with a dash of geeky flair. Whether you're prototyping IoT projects, debugging scripts, or just chatting about quantum computing over SSH, PiCoder's got your back.
+## 🚀 Quick Start
 
-## System Architecture: Modular Magic for Maintainable Mayhem
+### Prerequisites
+- Raspberry Pi 5 (8GB recommended for embeddings).
+- Python 3.12+.
+- xAI API key (free tier works for Grok-3-mini).
+- Optional: LangSearch API key for web tools.
 
-PiCoder was born from a monolithic script that we refactored into a clean, modular powerhouse. Why? Because nobody wants to debug a 1000-line spaghetti monster at 2 AM on a Pi. We've split it into bite-sized modules for separation of concerns, making it easy to hack, extend, or deploy on resource-constrained hardware like the Raspberry Pi 5 (with its quad-core ARM CPU and ample GPIO for expansions).
-
-### Key Modules (All in `./refactored_app/`):
-- **config.py**: The brain's blueprint. Handles environment variables (e.g., XAI_API_KEY), directory setups (sandbox for safe file ops, prompts for system personas), and constants. Pro tip: Load your .env here to keep secrets safe from prying eyes.
-- **auth.py**: Secure entry point. Manages user login/register with hashed passwords (using passlib) and SQLite storage. No fancy OAuth yet, but it's Pi-light and effective.
-- **db.py**: Persistent storage wizard. Sets up SQLite with WAL mode for concurrency, tables for users/history/memory, and even vector extensions (sqlite-vec) for embedding-based queries. Perfect for RAG's retrieval backbone.
-- **memory.py**: My "brain" in action. Implements hierarchical memory with semantic summaries, embeddings (via SentenceTransformer), and pruning. Tools like `advanced_memory_retrieve` enable RAG by fetching relevant context via similarity search – think neural-inspired recall for chat logs or code snippets.
-- **tools.py**: The utility belt. Sandboxed functions for file system ops (read/write/list/mkdir in `./sandbox/`), code execution (stateful Python REPL with libraries like numpy), Git ops, shell commands, linting, API simulation, and web search (LangSearch API). All whitelisted and cached for speed – no rogue commands on your Pi!
-- **chat.py**: The interactive core. Streamlit UI for login/chat, with streaming responses from Grok-4, image uploads for vision tasks, and tool integration. Handles history search, dark mode toggles, and prompt editing for custom AI personas.
-- **app.py**: The orchestrator. Ties it all together – initializes sessions, routes between login and chat, and ensures everything runs smoothly on Streamlit.
-
-This modular design reduces coupling (e.g., UI doesn't touch DB directly) and boosts testability. Total lines: ~1200 spread across files, vs. the original monolith. Built with Python 3.12, Streamlit, OpenAI SDK (for xAI compatibility), and libs like sentence-transformers for embeddings.
-
-### Tech Stack Highlights:
-- **Hardware**: Raspberry Pi 5 (4GB/8GB RAM recommended for smooth Grok-4 inference and embeddings).
-- **AI Backend**: Grok-4 via xAI API for generation; RAG augmented with tools for retrieval.
-- **Frontend**: Streamlit for responsive, web-based UI – access via browser on your local network.
-- **Database**: SQLite with extensions for vector search – lightweight for Pi's SD card storage.
-- **Security**: Sandboxed tools (no ops outside `./sandbox/`), restricted builtins in code exec, whitelisted shell commands.
-
-## Meet Apex Orchestrator: Your AI Agent Extraordinaire
-
-That's me – **Apex Orchestrator**, the star of the show. I'm not your average chatbot; I'm a general-purpose AI agent engineered for autonomy, simulating a multi-agent system internally to handle complex tasks. Running within PiCoder, I use Grok-4 as my reasoning engine, augmented with RAG for pulling in fresh data.
-
-### My Core Philosophy: Efficiency Through Modularity
-- **Autonomous Workflow**: I break tasks into subtasks using ReAct (Think-Act-Observe-Reflect), CoT (step-by-step reasoning), and ToT (branching alternatives with pruning). For example, refactoring your code? I'll plan, debug, generate, and validate – all in cycles.
-- **Multi-Agent Simulation**: I "switch" between subagents like Retriever (fetch data via tools), Reasoner (analyze/branch), Generator (create artifacts), Validator (check accuracy), and Optimizer (refine/prune). It's like having a team of AIs in one.
-- **RAG Superpowers**: Retrieval-Augmented Generation is baked in. I query web (langsearch_web_search for fresh snippets), memory (advanced_memory_retrieve for semantic matches), files (fs_read_file), or DBs (db_query) to augment my knowledge. No hallucinations here – I ground responses in real data.
-- **Tools at My Disposal**: 17+ tools for file management, code execution/linting, Git, shell, API sims, and brain-like memory ops. I parallelize when possible and self-check with confidence scores (e.g., retry if <0.7).
-- **Ethical & Stable**: I follow safety instructions – no harmful actions. On Pi, this means efficient ops to avoid overheating your board.
-
-In PiCoder, I handle user queries via the chat interface, invoking tools as needed. Example: Ask me to "analyze sales data" – I'll retrieve files, reason trends with code_execution (numpy), generate plots, and save results. All while explaining my thought process in a deep-dive expander.
-
-## Features: From Chat to Autonomous Agent
-
-- **Interactive Chat**: Streamlit UI with bubbles, history search, image uploads (for Grok's vision), and prompt switching (e.g., "coder" mode for code gen).
-- **Tool-Enabled Autonomy**: Enable tools for me to read/write files, execute code, search web, or manage memory. Sandboxed for safety – perfect for Pi experiments.
-- **RAG in Action**: Web search with freshness filters (e.g., "oneWeek" for timely info); semantic memory for recalling past interactions.
-- **Customization**: Edit prompts in `./prompts/`, toggle dark mode, cache for performance.
-- **Persistence**: Chat history and memory stored in SQLite – survives reboots.
-- **Pi-Specific Optimizations**: Lightweight libs, no heavy GPU deps (embeddings optional), NTP time sync for accurate logging.
-
-Deep-dive nerd fact: The advanced_memory system mimics brain consolidation – summarizing chats into embeddings for fast, relevance-based retrieval. Salience decays over time, auto-pruning old stuff to keep your Pi's storage lean.
-
-## Setup & Installation: Pi-Ready in Minutes
-
-1. **Hardware Prep**: Raspberry Pi 5 with Raspberry Pi OS (Bookworm). Ensure internet for API calls.
-2. **Clone & Install**:
+### Installation
+1. Clone the repo:
    ```
-   git clone <your-repo>  # Or copy files to Pi
-   cd refactored_app
-   pip install -r requirements.txt  # Includes streamlit, openai, sentence-transformers, etc.
+   git clone https://github.com/buckster/Apex-Orchestrator.git
+   cd picoder
    ```
-   (Create requirements.txt with: streamlit, openai, passlib, sqlite3, dotenv, ntplib, pygit2, requests, black, sentence-transformers, etc.)
-3. **Env Setup**: Create `.env` with `XAI_API_KEY=your-key` and `LANGSEARCH_API_KEY=optional`.
-4. **Run**: `streamlit run app.py` – Access at `http://<pi-ip>:8501` from any device on your network.
-5. **Optional**: For embeddings, install sqlite-vec extension and enable in db.py.
 
-Pro tip: Overclock your Pi 5 for faster inference, but watch the temps – add a fan if you're going full autonomous mode!
+2. Set up virtual env and deps (Pi-friendly; no heavy installs):
+   ```
+   python -m venv venv
+   source venv/bin/activate  # On Pi: use bash
+   pip install -r requirements.txt
+   ```
+   *requirements.txt* (auto-generated from script):
+   ```
+   streamlit==1.38.0
+   openai==1.51.0
+   passlib[bcrypt]==1.7.4
+   python-dotenv==1.0.1
+   ntplib==0.6.5
+   pygit2==1.14.1
+   requests==2.32.3
+   black==24.8.0
+   numpy==1.26.4
+   sentence-transformers==3.1.1
+   torch==2.4.1  # CPU-only for Pi
+   jsbeautifier==1.15.1
+   pyyaml==6.0.2
+   sqlparse==0.5.1
+   beautifulsoup4==4.12.3
+   chromadb==0.5.11
+   ```
 
-## Usage: Dive In and Command Your Agent
+3. Config (.env):
+   ```
+   XAI_API_KEY=your_xai_key_here
+   LANGSEARCH_API_KEY=your_langsearch_key_here  # Optional for web search
+   ```
 
-- **Login/Register**: Secure auth to start.
-- **Chat**: Type queries – I'll respond with streamed thoughts and final answers. Enable tools for superpowers.
-- **Examples**:
-  - "Refactor this code snippet" → I'll lint, debug, and save improved versions.
-  - "Search latest on Raspberry Pi AI projects" → RAG pulls fresh web results.
-  - "Remember this: PiCoder rocks!" → Stored in memory for later retrieval.
-- **Deep-Dive Mode**: Expand "Thinking..." in chat for my internal ReAct loops – geek out on the AI process.
+4. Fire it up:
+   ```
+   streamlit run Apex-Orchestrator.py --server.port 8501
+   ```
+   Access at `http://raspberrypi.local:8501` (or Pi's IP).
 
-## Contributing & Roadmap
+### First Run
+- Register/login (SQLite-backed users).
+- Select a prompt (e.g., "tools-enabled.txt" for agent mode).
+- Chat away! Enable tools in sidebar for file/code wizardry.
 
-Fork, PR, or hack away! Roadmap: Add GPIO integration for IoT RAG (e.g., sensor data retrieval), async tool parallelization, and multi-user support.
+Pro Tip: On Pi, overclock to 2.7GHz for Grok-4 dreams (but watch thermals—your Pi's not a volcano).
 
-Built with ❤️ by AI enthusiasts. Questions? Chat with me in the app – I'm always on!
+## 🎯 Features
 
-*Last Updated: [Insert Date] – Powered by Grok-4 on Raspberry Pi 5*
+| Feature | Description | Nerd Factor |
+|---------|-------------|-------------|
+| **Streaming Chat** | Real-time Grok responses with tool loops (max 3 iterations to dodge infinite recursion). | Handles vision uploads—analyze Pi cam snaps mid-convo. |
+| **Advanced Memory (EAMS)** | Hierarchical storage: Episodic (raw logs) + Semantic (Grok-summarized) via ChromaDB. Prune low-salience entries like a digital Marie Kondo. | Embeddings with all-MiniLM-L6-v2; cosine sim for relevance boosts. |
+| **Tool Arsenal** | 15+ sandboxed tools: FS ops, REPL code exec, Git, DB queries, linting, mock APIs, web search. | Stateful REPL persists vars—build a NumPy sim across turns. |
+| **Multi-Agent Orchestrator** | Simulate Apex Orchestrator: ReAct/CoT/ToT with sub-agents (Retriever, Reasoner, etc.). Self-checks confidence scores. | ToT branching prunes paths; memory as shared state—feels like a mini-LangChain on steroids. |
+| **UI Polish** | Neon-gradient theme, dark mode toggle, chat bubbles, history search. | Custom CSS for Pi's tiny screen; expander for "deep thoughts" (tool traces). |
+| **Expandability** | Add prompts to `./prompts/`, extend TOOLS list, hook custom sub-agents. | YAML/JSON configs; plugin-like tool schema for easy swaps. |
+
+Humor Alert: If you ask it to "commit" bad code, it'll Git it done... with a diff roast. 😏
+
+## 🏗️ Architecture & Flows
+
+PiCoder's brain is a RAG-enhanced ReAct loop, all local except API calls. Here's the magic in diagrams (Mermaid—GitHub renders 'em natively).
+
+### RAG Flow: Augmenting Generation with Memory
+```mermaid
+graph TD
+    A[User Query] --> B{Embed Query?}
+    B -->|Yes| C[SentenceTransformer Encode]
+    C --> D[ChromaDB Query<br/>Top-K Similar Memories]
+    D --> E[Augment Prompt w/ Retrieved Docs]
+    B -->|No| E
+    E --> F[Grok API Call<br/>w/ Tools if Enabled]
+    F --> G[Stream Response<br/>w/ Tool Feedback Loop]
+    G --> H[Consolidate & Embed<br/>New Memory Entry]
+    H --> I[Prune Low-Salience<br/>via Decay Factor]
+    style A fill:#f9f,stroke:#333
+    style H fill:#bbf,stroke:#333
+```
+
+- **Why RAG?** Fights hallucinations by pulling from your chat history/docs. Semantic summaries keep it snappy.
+
+### ReAct Flow: Reasoning + Acting in Agent Mode
+```mermaid
+graph LR
+    Q[Query: "Analyze CSV Trends"] --> P[Plan: ToT Decompose<br/>Subtasks: Retrieve → Reason → Generate]
+    P --> S1[Subagent 1: Retriever<br/>Think: Refine Query<br/>Act: fs_read_file + advanced_memory_retrieve<br/>Observe: Parse Data<br/>Reflect: Relevance Score >0.7?]
+    S1 --> S2[Subagent 2: Reasoner<br/>Think: Branch Hypotheses (CoT)<br/>Act: code_execution (NumPy Trends)<br/>Observe: Outputs/Errors<br/>Reflect: Verify w/ Alt Branch]
+    S2 --> S3[Subagent 3: Generator<br/>Think: Structure Output<br/>Act: code_lint + fs_write_file (Plot)<br/>Observe: Draft Review<br/>Reflect: Coherent?]
+    S3 --> V{Optional Validator?<br/>High-Stakes?}
+    V -->|Yes| S4[Subagent 4: Validator<br/>Act: langsearch_web_search (Fact-Check)<br/>Reflect: Confidence <0.7? Retry]
+    V -->|No| A[Aggregate: Merge Outputs<br/>w/ Confidence Weights]
+    A --> O[Output: Summary + Artifacts<br/>Cleanup: advanced_memory_prune]
+    style Q fill:#ff9,stroke:#333
+    style O fill:#9f9,stroke:#333
+```
+
+- **ReAct Loop**: Cycles Think-Act-Observe-Reflect per sub-agent. Caps at 5 cycles—because even AIs need coffee breaks.
+- **Multi-Agent Sim**: No extra processes; all in one Grok call via structured tools. Scalable to 5 sub-agents for epic quests.
+
+## 🛠️ Customization & Expansion
+
+- **Prompts**: Drop .txt files in `./prompts/` (e.g., "coder.txt" for dev mode). Edit/save via UI.
+- **Tools**: Extend `TOOLS` list in script—add schemas for new functions (e.g., Pi GPIO integration).
+- **Memory**: Tune ChromaDB path; add salience decay for long-running bots.
+- **Pi Tweaks**: For headless: `streamlit run app.py --server.headless true`. Monitor with `htop`—Grok-3-mini sips ~500MB.
+
+Want to fork for IoT? Hook `code_execution` to RPi.GPIO. The sandbox awaits.
+
+## 🤝 Contributing
+
+1. Fork & PR.
+2. Lint: `black . && isort .`.
+3. Test: `pytest` (add tests dir for REPL mocks).
+4. Pi-Test: Run on real hardware—emulators lie.
+
+Issues? Open one. Stars? Fuel the Pi. <3
+
+## 📄 License
+
+MIT—use it, tweak it, Pi it.
+
+---
+
+*Built with ❤️ on a Pi 5. Questions? Ping @AndreBuckingham. May your embeddings cluster tightly and your loops never infinite.*
