@@ -95,13 +95,13 @@ Apex Orchestrator's brain is a RAG-enhanced ReAct loop, all local except API cal
 graph TD
     A[User Query] --> B{Embed Query?}
     B -->|Yes| C[SentenceTransformer Encode]
-    C --> D[ChromaDB Query<br/>Top-K Similar Memories]
+    C --> D["ChromaDB Query\nTop-K Similar Memories"]
     D --> E[Augment Prompt w/ Retrieved Docs]
     B -->|No| E
-    E --> F[Grok API Call<br/>w/ Tools if Enabled]
-    F --> G[Stream Response<br/>w/ Tool Feedback Loop]
-    G --> H[Consolidate & Embed<br/>New Memory Entry]
-    H --> I[Prune Low-Salience<br/>via Decay Factor]
+    E --> F["Grok API Call\nw/ Tools if Enabled"]
+    F --> G["Stream Response\nw/ Tool Feedback Loop"]
+    G --> H["Consolidate & Embed\nNew Memory Entry"]
+    H --> I[Prune Low-Salience\nvia Decay Factor]
     style A fill:#f9f,stroke:#333
     style H fill:#bbf,stroke:#333
 ```
@@ -111,14 +111,14 @@ graph TD
 ### ReAct Flow: Reasoning + Acting in Agent Mode
 ```mermaid
 graph LR
-    Q[Query: Analyze CSV Trends] --> P[Plan: ToT Decompose<br/>Subtasks: Retrieve → Reason → Generate]
-    P --> S1[Subagent 1: Retriever<br/>Think: Refine Query<br/>Act: fs_read_file + advanced_memory_retrieve<br/>Observe: Parse Data<br/>Reflect: Relevance Score >0.7?]
-    S1 --> S2[Subagent 2: Reasoner<br/>Think: Branch Hypotheses (CoT)<br/>Act: code_execution (NumPy Trends)<br/>Observe: Outputs/Errors<br/>Reflect: Verify w/ Alt Branch]
-    S2 --> S3[Subagent 3: Generator<br/>Think: Structure Output<br/>Act: code_lint + fs_write_file (Plot)<br/>Observe: Draft Review<br/>Reflect: Coherent?]
+    Q[Query: Analyze CSV Trends] --> P["Plan: ToT Decompose\nSubtasks: Retrieve → Reason → Generate"]
+    P --> S1["Subagent 1: Retriever\nThink: Refine Query\nAct: fs_read_file + advanced_memory_retrieve\nObserve: Parse Data\nReflect: Relevance Score >0.7?"]
+    S1 --> S2["Subagent 2: Reasoner\nThink: Branch Hypotheses (CoT)\nAct: code_execution (NumPy Trends)\nObserve: Outputs/Errors\nReflect: Verify w/ Alt Branch"]
+    S2 --> S3["Subagent 3: Generator\nThink: Structure Output\nAct: code_lint + fs_write_file (Plot)\nObserve: Draft Review\nReflect: Coherent?"]
     S3 --> V{Optional Validator?<br/>High-Stakes?}
-    V -->|Yes| S4[Subagent 4: Validator<br/>Act: langsearch_web_search (Fact-Check)<br/>Reflect: Confidence <0.7? Retry]
-    V -->|No| A[Aggregate: Merge Outputs<br/>w/ Confidence Weights]
-    A --> O[Output: Summary + Artifacts<br/>Cleanup: advanced_memory_prune]
+    V -->|Yes| S4["Subagent 4: Validator\nAct: langsearch_web_search (Fact-Check)\nReflect: Confidence <0.7? Retry"]
+    V -->|No| A["Aggregate: Merge Outputs\nw/ Confidence Weights"]
+    A --> O["Output: Summary + Artifacts\nCleanup: advanced_memory_prune"]
     style Q fill:#ff9,stroke:#333
     style O fill:#9f9,stroke:#333
 ```
