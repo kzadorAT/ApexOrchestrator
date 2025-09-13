@@ -1,4 +1,4 @@
-# Apex Orchestrator: Raspberry Pi 5 And Grok-4 Powered Autonomous AI Agent - RAG
+# Apex Orchestrator: Raspberry Pi 5 And Grok Powered Autonomous AI Agent - RAG
 
 [![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/yourusername/apex-orchestrator) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.38.0-orange.svg)](https://streamlit.io/)
 
