@@ -180,4 +180,4 @@ Issues? Open one. Stars? Fuel the Pi. <3
 
 MIT—use it, tweak it, Pi it.
 
-*Built with ❤️ on a Pi 5. Questions? Ping @yourhandle. May your embeddings cluster tightly and your loops never infinite.*
+*Built with ❤️ on a Pi 5. Questions? Ping @AndreBuckingham on X. May your embeddings cluster tightly and your loops never infinite.*
