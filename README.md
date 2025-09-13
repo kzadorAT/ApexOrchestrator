@@ -110,7 +110,8 @@ graph TD
 
 ### ReAct Flow: Reasoning + Acting in Agent Mode
 
-```mermaid    
+```mermaid
+flowchart TD    
     A[User Query] --> B[Task Initialization\n(Main Agent - ToT Planning)]  
     B --> B1[Parse Query: Goal, Constraints, Domain]
     B1 --> B2[Decompose into 3-5 Subtasks\n(e.g., Retrieve → Reason → Generate → Validate)]
