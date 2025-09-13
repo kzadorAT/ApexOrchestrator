@@ -2,7 +2,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/yourusername/picoder?style=social)](https://github.com/yourusername/picoder) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.38.0-orange.svg)](https://streamlit.io/)
 
-> *Because who needs a data center when your pocket-sized Pi can summon AI overlords? PiCoder turns your Raspberry Pi 5 into a self-contained RAG (Retrieval-Augmented Generation) powerhouse—chat, code, search, and orchestrate like a boss. Expandable, sandboxed, and nerd-approved. 🚀*
+> *Because who needs a data center when your pocket-sized Pi can summon AI overlords? Apex Orchestrator turns your Raspberry Pi 5 into a self-contained RAG (Retrieval-Augmented Generation) powerhouse—chat, code, search, and orchestrate like a boss. Expandable, sandboxed, and nerd-approved. 🚀*
 
 Apex Orchestrator is a standalone AI agent platform hosted on Raspberry Pi 5, leveraging xAI's Grok models for intelligent, tool-augmented conversations. It's built for tinkerers, coders, and mad scientists who want local-first AI with global smarts. No Kubernetes drama—just pure Pi magic.
 
