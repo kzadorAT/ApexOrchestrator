@@ -163,6 +163,7 @@ flowchart TD
 - **Tools**: Extend `TOOLS` list in script—add schemas for new functions (e.g., Pi GPIO integration).
 - **Memory**: Tune ChromaDB path; add salience decay for long-running bots.
 - **Pi Tweaks**: For headless: `streamlit run app.py --server.headless true`. Monitor with `htop`—Full app sips ~500MB.
+- **Customization**: Drop my script in the sandbox and we´ll re-write it to fit anything you want to add to the backend, and adjust my toolschema accordingly.
 
 Want to fork for IoT? Hook `code_execution` to RPi.GPIO. The sandbox awaits.
 
