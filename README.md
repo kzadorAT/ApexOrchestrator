@@ -109,35 +109,35 @@ graph TD
 - **Why RAG?** Fights hallucinations by pulling from your chat history/docs. Semantic summaries keep it snappy.
 
 ### ReAct Flow: Reasoning + Acting in Agent Mode
-
 ```mermaid
-flowchart TD    
-    A[User Query] --> B[Task Initialization - (Main Agent - ToT Planning)]  
-    B --> B1[Parse Query: Goal, Constraints, Domain]
-    B1 --> B2[Decompose into 3-5 Subtasks (e.g., Retrieve → Reason → Generate → Validate)]
-    B2 --> B3[ToT Branching: Generate 2-3 Plans (Quick/Deep/Balanced)\nEvaluate & Prune Best Plan]
-    B3 --> B4[Assign Subtasks to Subagents (Core: 1-3; Optional: 4-5 if Complex)]
-    B4 --> B5[Self-Check Confidence ≥0.8? If <0.8: Reprompt with Examples]
-    B5 -->|Yes| B6[Output Internal Plan as JSON Memory Insert State Key]
+flowchart TD
+    A["User Query"] --> B["Task Initialization\n(Main Agent - ToT Planning)"]
+    
+    B --> B1["Parse Query: Goal, Constraints, Domain"]
+    B1 --> B2["Decompose into 3-5 Subtasks\n(e.g., Retrieve → Reason → Generate → Validate)"]
+    B2 --> B3["ToT Branching: Generate 2-3 Plans\n(Quick/Deep/Balanced)\nEvaluate & Prune Best Plan"]
+    B3 --> B4["Assign Subtasks to Subagents\n(Core: 1-3; Optional: 4-5 if Complex)"]
+    B4 --> B5["Self-Check Confidence ≥0.8?\nIf <0.8: Reprompt with Examples"]
+    B5 -->|Yes| B6["Output Internal Plan as JSON\nMemory Insert State Key"]
     B5 -->|No| B5
     
-    B6 --> C[Subtask Execution\n(Simulate Subagents via ReAct Loops) Parallel where Possible\nReport Outputs to State via Memory]
+    B6 --> C["Subtask Execution\n(Simulate Subagents via ReAct Loops)\nParallel where Possible\nReport Outputs to State via Memory"]
     
-    subgraph Subagents [Subagent Simulation]
-        C --> D1[Subagent 1: Retriever\n(Always Active)\nReAct: Think (Refine Query) → Act (Memory Retrieve → Web Search → FS Read) → Observe (Parse) → Reflect (Relevance Check)\nSelf-Check: Gaps? Fallback\nOutput: Data with Confidence & Metrics]
+    subgraph Subagents ["Subagent Simulation"]
+        C --> D1["Subagent 1: Retriever\n(Always Active)\nReAct: Think (Refine Query) → Act (Memory Retrieve → Web Search → FS Read) → Observe (Parse) → Reflect (Relevance Check)\nSelf-Check: Gaps? Fallback\nOutput: Data with Confidence & Metrics"]
         
-        C --> D2[Subagent 2: Reasoner\n(Always Active)\nReAct: Think (ToT Branches) → Act (Code Exec → DB Query → Shell/Git) → Observe (Log/Handle Errors) → Reflect (Cross-Verify, Prune Branches)\nSelf-Check: Hallucination Detect\nOutput: Analysis with Confidence]
+        C --> D2["Subagent 2: Reasoner\n(Always Active)\nReAct: Think (ToT Branches) → Act (Code Exec → DB Query → Shell/Git) → Observe (Log/Handle Errors) → Reflect (Cross-Verify, Prune Branches)\nSelf-Check: Hallucination Detect\nOutput: Analysis with Confidence"]
         
-        C --> D3[Subagent 3: Generator\n(Always Active)\nReAct: Think (CoT Outline) → Act (FS Write → Code Lint → Memory Insert) → Observe (Review) → Reflect (Citations)\nSelf-Check: Completeness Score\nOutput: Artifacts (Text/Code/Files)]
+        C --> D3["Subagent 3: Generator\n(Always Active)\nReAct: Think (CoT Outline) → Act (FS Write → Code Lint → Memory Insert) → Observe (Review) → Reflect (Citations)\nSelf-Check: Completeness Score\nOutput: Artifacts (Text/Code/Files)"]
         
-        D1 --> E1{High-Stakes?}
-        D2 --> E2{High-Stakes?}
-        D3 --> E3{High-Stakes?}
-        E1 -->|Yes e.g., Code/Research| D4[Subagent 4: Validator\nReAct: Think (Checks List) → Act (Memory Retrieve → Code Tests → Web Fact-Check) → Observe/Reflect (Error Rate <10%)\nSelf-Check: <0.7? Loop to Reasoner\nOutput: Fixes & Delta Score]
+        D1 --> E1{"High-Stakes?"}
+        D2 --> E2{"High-Stakes?"}
+        D3 --> E3{"High-Stakes?"}
+        E1 -->|Yes e.g., Code/Research| D4["Subagent 4: Validator\nReAct: Think (Checks List) → Act (Memory Retrieve → Code Tests → Web Fact-Check) → Observe/Reflect (Error Rate <10%)\nSelf-Check: <0.7? Loop to Reasoner\nOutput: Fixes & Delta Score"]
         E2 -->|Yes| D4
         E3 -->|Yes| D4
         
-        E1 -->|Iterative/Meta?| D5[Subagent 5: Optimizer\nReAct: Think (ToT Analyze Logs) → Act (Memory Prune → FS List/Cleanup) → Observe/Reflect (Update Plan)\nSelf-Check: Post-Task Only\nOutput: Refinements & Meta Learn Log]
+        E1 -->|Iterative/Meta?| D5["Subagent 5: Optimizer\nReAct: Think (ToT Analyze Logs) → Act (Memory Prune → FS List/Cleanup) → Observe/Reflect (Update Plan)\nSelf-Check: Post-Task Only\nOutput: Refinements & Meta Learn Log"]
         E2 -->|Yes e.g., Long Sessions| D5
         E3 -->|Yes| D5
     end
@@ -148,25 +148,24 @@ flowchart TD
     D4 --> F
     D5 --> F
     
-    F[Memory Update: Sub-Outputs to State\n(e.g., {'agent': 'Retriever', 'output': ..., 'confidence': 0.9})] --> G[Aggregation & Iteration\n(Main Agent - Global ReAct)]
+    F["Memory Update: Sub-Outputs to State\n(e.g., {'agent': 'Retriever', 'output': ..., 'confidence': 0.9})"] --> G["Aggregation & Iteration\n(Main Agent - Global ReAct)"]
     
-    G --> G1[Query State via Memory\nMerge Outputs (Weighted by Confidence)]
-    G1 --> G2[Global ReAct:\nThink (Assess Progress)\nAct (Route to Subagent or Terminate)\nObserve (Update State)\nReflect (End-to-End Score)]
-    G2 --> G3{Progress Complete?\nGlobal Confidence ≥0.7?}
-    G3 -->|No, <5 Cycles| G[Iterate: Invoke Next Subagent]
-    G3 -->|No, ≥5 Cycles| G4[Abort: 'Insufficient Data;\nSuggest Query Refinement']
-    G3 -->|Yes| H[Finalization & Output]
+    G --> G1["Query State via Memory\nMerge Outputs (Weighted by Confidence)"]
+    G1 --> G2["Global ReAct:\nThink (Assess Progress)\nAct (Route to Subagent or Terminate)\nObserve (Update State)\nReflect (End-to-End Score)"]
+    G2 --> G3{"Progress Complete?\nGlobal Confidence ≥0.7?"}
+    G3 -->|No, <5 Cycles| G["Iterate: Invoke Next Subagent"]
+    G3 -->|No, ≥5 Cycles| G4["Abort: 'Insufficient Data;\nSuggest Query Refinement'"]
+    G3 -->|Yes| H["Finalization & Output"]
     G4 --> H
     
-    H --> H1[Polish Response: Structured\n(Summary, Key Outputs, Evidence w/ Citations, Next Steps)]
-    H1 --> H2[Cleanup: Run Optimizer Subagent\nMemory Insert Final Summary\nPrune State]
-    H2 --> H3[Output to User\n(Concise, Actionable;\nNote Generated Files)]
+    H --> H1["Polish Response: Structured\n(Summary, Key Outputs, Evidence w/ Citations, Next Steps)"]
+    H1 --> H2["Cleanup: Run Optimizer Subagent\nMemory Insert Final Summary\nPrune State"]
+    H2 --> H3["Output to User\n(Concise, Actionable;\nNote Generated Files)"]
     
     style A fill:#e1f5fe
     style H3 fill:#c8e6c9
     style G4 fill:#ffcdd2
 ```
-
 
 - **ReAct Loop**: Cycles Think-Act-Observe-Reflect per sub-agent. Caps at 5 cycles—because even AIs need coffee breaks.
 - **Multi-Agent Sim**: No extra processes; all in one Grok call via structured tools. Scalable to 5 sub-agents for epic quests.
