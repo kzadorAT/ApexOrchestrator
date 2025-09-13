@@ -68,7 +68,7 @@ Key highlights:
 
 ### First Run
 - Register/login (SQLite-backed users).
-- Select a prompt (e.g., "tools-enabled.txt" for agent mode).
+- Select a prompt (e.g., "ApexOrchestrator.txt" for agent mode, or your own custom prompt).
 - Chat away! Enable tools in sidebar for file/code wizardry.
 
 Pro Tip: On Pi, overclock to 2.7GHz for Grok-4 dreams (but watch thermals—your Pi's not a volcano).
