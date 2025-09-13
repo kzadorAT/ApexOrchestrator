@@ -1362,7 +1362,7 @@ def chat_page():
                     full_response += chunk
                     thought_container.markdown(full_response, unsafe_allow_html=False)  # Stream into expander
             # Always display response outside: parse if marker, else full
-            marker = "### Final Answer"
+            marker = "Polished Reponse"
             display_response = full_response
             if marker in full_response:
                 parts = full_response.split(marker, 1)
