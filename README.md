@@ -162,7 +162,7 @@ flowchart TD
 - **Prompts**: Drop .txt files in `./prompts/` (e.g., "coder.txt" for dev mode). Edit/save via UI.
 - **Tools**: Extend `TOOLS` list in script—add schemas for new functions (e.g., Pi GPIO integration).
 - **Memory**: Tune ChromaDB path; add salience decay for long-running bots.
-- **Pi Tweaks**: For headless: `streamlit run app.py --server.headless true`. Monitor with `htop`—Grok-3-mini sips ~500MB.
+- **Pi Tweaks**: For headless: `streamlit run app.py --server.headless true`. Monitor with `htop`—Full app sips ~500MB.
 
 Want to fork for IoT? Hook `code_execution` to RPi.GPIO. The sandbox awaits.
 
