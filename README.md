@@ -18,7 +18,7 @@ Key highlights:
 ### Prerequisites
 - Raspberry Pi 5 (8GB recommended for embeddings).
 - Python 3.12+.
-- xAI API key (free tier works for Grok-3-mini).
+- xAI API key 
 - Optional: LangSearch API key for web tools.
 
 ### Installation
