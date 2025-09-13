@@ -90,21 +90,6 @@ Humor Alert: If you ask it to "commit" bad code, it'll Git it done... with a dif
 
 Apex Orchestrator's brain is a RAG-enhanced ReAct loop, all local except API calls. Here's the magic in diagrams.
 
-### RAG Flow: Augmenting Generation with Memory
-```mermaid
-graph TD
-    A[User Query] --> B{Embed Query?}
-    B -->|Yes| C[SentenceTransformer Encode]
-    C --> D["ChromaDB Query\nTop-K Similar Memories"]
-    D --> E[Augment Prompt w/ Retrieved Docs]
-    B -->|No| E
-    E --> F["Grok API Call\nw/ Tools if Enabled"]
-    F --> G["Stream Response\nw/ Tool Feedback Loop"]
-    G --> H["Consolidate & Embed\nNew Memory Entry"]
-    H --> I[Prune Low-Salience\nvia Decay Factor]
-    style A fill:#f9f,stroke:#333
-    style H fill:#bbf,stroke:#333
-```
 
 - **Why RAG?** Fights hallucinations by pulling from your chat history/docs. Semantic summaries keep it snappy.
 
@@ -169,6 +154,23 @@ flowchart TD
 
 - **ReAct Loop**: Cycles Think-Act-Observe-Reflect per sub-agent. Caps at 5 cycles—because even AIs need coffee breaks.
 - **Multi-Agent Sim**: No extra processes; all in one Grok call via structured tools. Scalable to 5 sub-agents for epic quests.
+
+### RAG Flow: Augmenting Generation with Memory
+```mermaid
+graph TD
+    A[User Query] --> B{Embed Query?}
+    B -->|Yes| C[SentenceTransformer Encode]
+    C --> D["ChromaDB Query\nTop-K Similar Memories"]
+    D --> E[Augment Prompt w/ Retrieved Docs]
+    B -->|No| E
+    E --> F["Grok API Call\nw/ Tools if Enabled"]
+    F --> G["Stream Response\nw/ Tool Feedback Loop"]
+    G --> H["Consolidate & Embed\nNew Memory Entry"]
+    H --> I[Prune Low-Salience\nvia Decay Factor]
+    style A fill:#f9f,stroke:#333
+    style H fill:#bbf,stroke:#333
+```
+
 
 ## 🛠️ Customization & Expansion
 
