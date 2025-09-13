@@ -112,16 +112,16 @@ graph TD
 
 ```mermaid
 flowchart TD    
-    A[User Query] --> B[Task Initialization\n(Main Agent - ToT Planning)]  
+    A[User Query] --> B[Task Initialization - (Main Agent - ToT Planning)]  
     B --> B1[Parse Query: Goal, Constraints, Domain]
-    B1 --> B2[Decompose into 3-5 Subtasks\n(e.g., Retrieve → Reason → Generate → Validate)]
-    B2 --> B3[ToT Branching: Generate 2-3 Plans\n(Quick/Deep/Balanced)\nEvaluate & Prune Best Plan]
-    B3 --> B4[Assign Subtasks to Subagents\n(Core: 1-3; Optional: 4-5 if Complex)]
-    B4 --> B5[Self-Check Confidence ≥0.8?\nIf <0.8: Reprompt with Examples]
-    B5 -->|Yes| B6[Output Internal Plan as JSON\nMemory Insert State Key]
+    B1 --> B2[Decompose into 3-5 Subtasks (e.g., Retrieve → Reason → Generate → Validate)]
+    B2 --> B3[ToT Branching: Generate 2-3 Plans (Quick/Deep/Balanced)\nEvaluate & Prune Best Plan]
+    B3 --> B4[Assign Subtasks to Subagents (Core: 1-3; Optional: 4-5 if Complex)]
+    B4 --> B5[Self-Check Confidence ≥0.8? If <0.8: Reprompt with Examples]
+    B5 -->|Yes| B6[Output Internal Plan as JSON Memory Insert State Key]
     B5 -->|No| B5
     
-    B6 --> C[Subtask Execution\n(Simulate Subagents via ReAct Loops)\nParallel where Possible\nReport Outputs to State via Memory]
+    B6 --> C[Subtask Execution\n(Simulate Subagents via ReAct Loops) Parallel where Possible\nReport Outputs to State via Memory]
     
     subgraph Subagents [Subagent Simulation]
         C --> D1[Subagent 1: Retriever\n(Always Active)\nReAct: Think (Refine Query) → Act (Memory Retrieve → Web Search → FS Read) → Observe (Parse) → Reflect (Relevance Check)\nSelf-Check: Gaps? Fallback\nOutput: Data with Confidence & Metrics]
