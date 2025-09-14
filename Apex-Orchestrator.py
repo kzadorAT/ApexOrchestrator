@@ -28,6 +28,7 @@ import shlex  # For safe shell splitting
 import builtins  # For restricted globals
 import chromadb  # For vector storage; pip install chromadb
 import uuid  # For unique IDs
+import html  # Add this import at the top of the script if not already present
 
 # Load environment variables
 load_dotenv()
@@ -123,7 +124,7 @@ db_query(db_path, query, params optional): Execute SQL on local SQLite db in san
 shell_exec(command): Run whitelisted shell commands (ls, grep, sed, etc.) in sandbox.
 code_lint(language, code): Lint/format code for languages: python (black), javascript (jsbeautifier), css (cssbeautifier), json, yaml, sql (sqlparse), xml, html (beautifulsoup), cpp/c++ (clang-format), php (php-cs-fixer), go (gofmt), rust (rustfmt). External tools required for some.
 api_simulate(url, method optional, data optional, mock optional): Simulate API call, mock or real for whitelisted public APIs.
-Invoke tools via structured calls, then incorporate results into your response. Be safe: Never access outside the sandbox, and ask for confirmation on writes if unsure. Limit to one tool per response to avoid loops. When outputting tags or code in your final response text (e.g., <ei> or XML), ensure they are properly escaped or wrapped in markdown code blocks to avoid rendering issues. However, when providing arguments for tools (e.g., the 'content' parameter in fs_write_file), always use the exact, literal, unescaped string content without any modifications."""
+Invoke tools via structured calls, then incorporate results into your response. Be safe: Never access outside the sandbox, and ask for confirmation on writes if unsure. Limit to one tool per response to avoid loops. When outputting tags or code in your final response text (e.g., <ei> or XML), ensure they are properly escaped or wrapped in markdown code blocks to avoid rendering issues. However, when providing arguments for tools (e.g., the 'content' parameter in fs_write_file), always use the exact, literal, unescaped string content without any modifications.When outputting tags or code in your final response text (e.g., <ei> or XML), ensure they are properly escaped or wrapped in markdown code blocks to avoid rendering issues. However, when providing arguments for tools (e.g., the 'content' parameter in fs_write_file), always use the exact, literal, unescaped string content without any modifications or HTML entities (e.g., use "<div>" not "&lt;div&gt;"). JSON-escape quotes as needed (e.g., \")."""
 }
 
 # Auto-create defaults if no files
@@ -255,6 +256,8 @@ def fs_write_file(file_path: str, content: str) -> str:
     if not os.path.exists(dir_path):
         return "Parent directory does not exist. Create it first with fs_mkdir."
     try:
+        # Unescape HTML entities (e.g., &lt; -> <) to ensure raw content is written
+        content = html.unescape(content)
         with open(safe_path, 'w') as f:
             f.write(content)
         # Invalidate read cache for this file
@@ -1018,7 +1021,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
     full_response = ""
     def generate(current_messages):
         nonlocal full_response
-        max_iterations = 5 
+        max_iterations = 15 
         iteration = 0
         previous_tool_calls = set()
         progress_metric = 0  # Track progress to avoid false loops
@@ -1233,7 +1236,7 @@ def chat_page():
         st.header("Chat Settings")
         model = st.selectbox(
             "Select Model",
-            ["grok-4", "grok-3-mini", "grok-3", "grok-code-fast-1"],
+            ["grok-4", "grok-3-mini", "grok-4-fast", "grok-code-fast-1"],
             key="model_select",
         )  # Extensible
         # Load Prompt Files Dynamically - Cached
@@ -1352,26 +1355,13 @@ def chat_page():
         with st.chat_message("user"):
             st.markdown(prompt, unsafe_allow_html=False)  # Standard user message
         with st.chat_message("assistant"):
-            # Expander for deep thought (streaming/tool output)
-            with st.expander("Thinking... (Deep Thought Process)"):
-                thought_container = st.empty()
-                image_files = st.session_state.get('uploaded_images', [])
-                generator = call_xai_api(model, st.session_state['messages'], st.session_state['custom_prompt'], stream=True, image_files=image_files, enable_tools=st.session_state.get('enable_tools', False))
-                full_response = ""
-                for chunk in generator:
-                    full_response += chunk
-                    thought_container.markdown(full_response, unsafe_allow_html=False)  # Stream into expander
-            # Always display response outside: parse if marker, else full
-            marker = "### Final Answer"
-            display_response = full_response
-            if marker in full_response:
-                parts = full_response.split(marker, 1)
-                thought_part = parts[0].strip()
-                final_part = marker + (parts[1] if len(parts) > 1 else "")
-                # Update expander with only thought part
-                thought_container.markdown(thought_part, unsafe_allow_html=False)
-                display_response = final_part
-            st.markdown(display_response, unsafe_allow_html=False)
+            response_container = st.empty()
+            image_files = st.session_state.get('uploaded_images', [])
+            generator = call_xai_api(model, st.session_state['messages'], st.session_state['custom_prompt'], stream=True, image_files=image_files, enable_tools=st.session_state.get('enable_tools', False))
+            full_response = ""
+            for chunk in generator:
+                full_response += chunk
+                response_container.markdown(full_response, unsafe_allow_html=False)
         st.session_state['messages'].append({"role": "assistant", "content": full_response})
         # Save to History (Fixed: Insert if new, update if existing)
         title = st.session_state['messages'][0]['content'][:50] + "..." if st.session_state['messages'] else "New Chat"
