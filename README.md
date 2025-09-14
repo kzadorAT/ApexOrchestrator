@@ -24,8 +24,8 @@ Key highlights:
 ### Installation
 1. Clone the repo:
    ```
-   git clone https://github.com/yourusername/apex-orchestrator.git
-   cd apex-orchestrator
+   git clone https://github.com/buckster123/ApexrOchestrator.git
+   cd ApexOrchestrator
    ```
 
 2. Set up virtual env and deps (Pi-friendly; no heavy installs):
