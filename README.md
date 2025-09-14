@@ -1,6 +1,6 @@
 # Apex Orchestrator: Raspberry Pi 5 And Grok Powered Autonomous AI Agent - RAG & Memory
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.38.0-orange.svg)](https://streamlit.io/)
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/) [![Streamlit](https://img.shields.io/badge/Streamlit-1.49.1-orange.svg)](https://streamlit.io/)
 
 > *Because who needs a data center when your pocket-sized Pi can summon AI overlords? Apex Orchestrator turns your Raspberry Pi 5 into a self-contained RAG (Retrieval-Augmented Generation) powerhouse—chat, code, search, and orchestrate like a boss. Expandable, sandboxed, and nerd-approved. 🚀*
 
