@@ -1191,7 +1191,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
 
 # Login Page - Unchanged
 def login_page():
-    st.title("Welcome to PiCoder")
+    st.title("Welcome to Apex Orchestrator")
     st.subheader("Login or Register")
     # Tabs for Login/Register
     tab1, tab2 = st.tabs(["Login", "Register"])
