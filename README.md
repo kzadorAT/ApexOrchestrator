@@ -160,17 +160,17 @@ Mermaid graph showing subagent hierarchy:
 
 ```mermaid
 graph TD
-    A[Main Agent<br/>(Orchestrator)] -->|Decompose & Route| S1[Retriever<br/>Gather Data<br/>(Memory/Web/FS)]
-    A --> S2[Reasoner<br/>Analyze & Compute<br/>(Code/DB/Shell)]
-    A --> S3[Generator<br/>Synthesize Outputs<br/>(Write/Lint)]
-    A -.->|Optional: High-Stakes| S4[Validator<br/>Verify Accuracy<br/>(Fact-Check/Tests)]
-    A -.->|Optional: Iterative| S5[Optimizer<br/>Refine & Prune<br/>(Meta-Learning)]
-    S1 --> M[Memory<br/>(Insert/Query/Embed)]
-    S2 --> T[Tools<br/>(Batch Calls)]
+    A["Main Agent\n(Orchestrator)"] -->|Decompose & Route| S1["Retriever\nGather Data\n(Memory/Web/FS)"]
+    A --> S2["Reasoner\nAnalyze & Compute\n(Code/DB/Shell)"]
+    A --> S3["Generator\nSynthesize Outputs\n(Write/Lint)"]
+    A -.->|Optional: High-Stakes| S4["Validator\nVerify Accuracy\n(Fact-Check/Tests)"]
+    A -.->|Optional: Iterative| S5["Optimizer\nRefine & Prune\n(Meta-Learning)"]
+    S1 --> M["Memory\n(Insert/Query/Embed)"]
+    S2 --> T["Tools\n(Batch Calls)"]
     S3 --> T
     S4 --> T
     S5 --> M
-    A --> G[Grok API<br/>(Reasoning Boost)]
+    A --> G["Grok API\n(Reasoning Boost)"]
     M --> A
     T --> A
     style A fill:#4e54c8
@@ -183,20 +183,20 @@ Core API call loop (from `call_xai_api` function) as a flowchart:
 
 ```mermaid
 flowchart TD
-    Start[User Prompt] --> Prep[Prepare Messages<br/>(System + History + Images)]
-    Prep --> Stream[client.chat.completions.create<br/>(Stream=True, Tools=TOOLS)]
-    Stream --> Chunk[For Each Chunk:<br/>Yield Content / Collect Tool Calls]
-    Chunk --> HasTools{tool_calls?}
-    HasTools -->|No| Done[Yield Final Response]
-    HasTools -->|Yes| Batch[Batch Tools by Name<br/>(e.g., FS + Memory)]
-    Batch --> LoopCheck{Iteration <5<br/>No Loop?}
-    LoopCheck -->|Yes| Exec[Execute Batched Tools<br/>(Safe Args, Cache Check)]
-    Exec --> YieldTool[Yield '[Tool Result: ...]']
-    YieldTool --> Append[Append Tool Response to Messages]
-    Append --> Commit[Batch DB Commit<br/>(Memory/History)]
+    Start["User Prompt"] --> Prep["Prepare Messages\n(System + History + Images)"]
+    Prep --> Stream["client.chat.completions.create\n(Stream=True, Tools=TOOLS)"]
+    Stream --> Chunk["For Each Chunk:\nYield Content / Collect Tool Calls"]
+    Chunk --> HasTools{"tool_calls?"}
+    HasTools -->|No| Done["Yield Final Response"]
+    HasTools -->|Yes| Batch["Batch Tools by Name\n(e.g., FS + Memory)"]
+    Batch --> LoopCheck{"Iteration <5\nNo Loop?"}
+    LoopCheck -->|Yes| Exec["Execute Batched Tools\n(Safe Args, Cache Check)"]
+    Exec --> YieldTool["Yield '[Tool Result: ...]'"]
+    YieldTool --> Append["Append Tool Response to Messages"]
+    Append --> Commit["Batch DB Commit\n(Memory/History)"]
     Commit --> Stream
     LoopCheck -->|No| Done
-    Done --> End[Full Response + Save History]
+    Done --> End["Full Response + Save History"]
     style Exec fill:#ff6b6b
 ```
 
