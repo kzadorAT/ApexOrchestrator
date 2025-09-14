@@ -1018,7 +1018,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
     full_response = ""
     def generate(current_messages):
         nonlocal full_response
-        max_iterations = 3 
+        max_iterations = 5 
         iteration = 0
         previous_tool_calls = set()
         progress_metric = 0  # Track progress to avoid false loops
@@ -1362,7 +1362,7 @@ def chat_page():
                     full_response += chunk
                     thought_container.markdown(full_response, unsafe_allow_html=False)  # Stream into expander
             # Always display response outside: parse if marker, else full
-            marker = "Polished Reponse"
+            marker = "### Final Answer"
             display_response = full_response
             if marker in full_response:
                 parts = full_response.split(marker, 1)
