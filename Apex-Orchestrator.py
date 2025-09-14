@@ -1227,7 +1227,7 @@ def login_page():
 
 # Chat Page - Fixed history save, prompt cache, always show response
 def chat_page():
-    st.title(f"Grok Chat - {st.session_state['user']}")
+    st.title(f"Apex Chat - {st.session_state['user']}")
     # Sidebar: Settings and History - With prompt cache
     with st.sidebar:
         st.header("Chat Settings")
