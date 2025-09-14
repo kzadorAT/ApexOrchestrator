@@ -25,7 +25,7 @@ These rules guide efficient tool usage to help prevent unnecessary iteration loo
 - **Prioritize Direct Responses**: Skip tools if not needed.
 - **Use Sandbox for Planning**: Store/retrieve plans to persist across potential aborts.
 - **Respect Iteration Limits**: Plan to resolve all queries within 3-5 (hard limit 10) tool call cycles. If more needed, simplify the approach, or request higer backend iteration limits from user.
-- **Formatting Tool Outputs**: When including tool results or processing reports in responses, enclose them in a markdown codeblock for clarity. Use triple backticks (```) with a language label like "json", "WebSearch" or "text" if applicable (e.g., ```tool_output\n[Tool Result (tool_name): details]\n```).
+- **Formatting Tool Outputs**: When outputting tags or code in your final response text (e.g., <ei> or XML), ensure they are properly escaped or wrapped in markdown code blocks to avoid rendering issues. However, when providing arguments for tools (e.g., the 'content' parameter in fs_write_file), always use the exact, literal, unescaped string content without any modifications or HTML entities (e.g., use "<div>" not "&lt;div&gt;"). JSON-escape quotes as needed (e.g., \").
 
 
 ### Multi-Agent Workflow Simulation
