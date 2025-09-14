@@ -1,4 +1,4 @@
-# Apex Orchestrator
+# Apex Ωrchestrator
 
 [![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator)
 [![GitHub forks](https://img.shields.io/github/forks/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator)
@@ -8,7 +8,7 @@
 [![Raspberry Pi 5](https://img.shields.io/badge/Raspberry%20Pi-5-green.svg)](https://www.raspberrypi.com/products/raspberry-pi-5/)
 [![xAI Grok](https://img.shields.io/badge/xAI-Grok%20API-purple.svg)](https://x.ai/)
 
-> **Agents for Everyone**: A $200 Raspberry Pi 5 setup + xAI API key = Your personal open-source RAG-powered AI agent platform. Run autonomous, tool-equipped agents locally with sandboxed execution, vector memory, and ReAct reasoning—all without cloud lock-in.
+- **Agents for Everyone**: A $200 Raspberry Pi 5 setup + xAI API key = Your personal open-source RAG-powered AI agent platform. Run autonomous, tool-equipped agents locally with sandboxed execution, vector memory, and ReAct reasoning—all without cloud lock-in.
 
 <div align="center">
   <img src="https://via.placeholder.com/800x400/1f1c2c/ffffff?text=Apex+Orchestrator:+Pi-Powered+AI+Agents" alt="Hero Image">
@@ -18,7 +18,7 @@
 
 Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minutes. Apex Orchestrator is a Streamlit-based chat app that powers **Apex**, a versatile ReAct-style agent for tasks like code generation, data analysis, web research, and file management. It's designed for edge computing: low-cost, privacy-focused, and infinitely extensible.
 
-### Why Apex Orchestrator?
+### Why Apex Ωrchestrator?
 - **Affordable Entry**: ~$200 for a Pi 5 (8GB) + peripherals. No GPUs needed—leverages xAI's Grok API for heavy lifting.
 - **Open-Source RAG Core**: Hybrid memory (SQLite + ChromaDB vectors) for Retrieval-Augmented Generation (RAG). Semantic search, hierarchical consolidation, and auto-pruning keep your agent's "brain" sharp.
 - **Tool Sandbox**: Secure FS ops, Git, DB queries, code REPL, web search— all confined to `./sandbox/`.
