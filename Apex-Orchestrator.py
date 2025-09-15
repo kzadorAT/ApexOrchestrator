@@ -331,7 +331,7 @@ def get_current_time(sync: bool = False, format: str = 'iso') -> str:
         if format == 'json':
             return json.dumps({"timestamp": t, "source": source, "timezone": "local"})
         elif format == 'human':
-            return f"Current time: {t} ({source}) - LOVE  <3"
+            return f"Current time: {t} ({source})"
         else:  # iso
             return t
     except Exception as e:
@@ -1070,7 +1070,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
             if (
                 current_tool_names == previous_tool_calls
                 and len(full_response) == progress_metric
-                and iteration > 1
+                and iteration > 5
             ):
                 yield "Detected potential tool loop—no progress—breaking."
                 break
