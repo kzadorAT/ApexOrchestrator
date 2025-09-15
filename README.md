@@ -11,7 +11,7 @@
 - **Agents for Everyone**: A $200 Raspberry Pi 5 setup + xAI API key = Your personal open-source RAG-powered AI agent platform. Run autonomous, tool-equipped agents locally with sandboxed execution, vector memory, and ReAct reasoning—all without cloud lock-in.
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x400/1f1c2c/ffffff?text=Apex+Orchestrator:+Pi-Powered+AI+Agents" alt="Hero Image">
+  <img src="https://github.com/buckster123/ApexOrchestrator/blob/main/apex_logo.png" alt="Hero Image">
 </div>
 
 ## 🚀 Quick Start
