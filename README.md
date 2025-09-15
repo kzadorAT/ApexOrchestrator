@@ -62,7 +62,6 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
 - **Storage**: 32GB+ microSD (for `./chroma_db/` and `./sandbox/`).
 - **OS**: Raspberry Pi OS (64-bit, Bookworm or later).
 - **Network**: Ethernet/WiFi for API calls (optional for offline mode).
-- **Cost Breakdown**: Pi 5 (~$80) + Case/Heatsink (~$20) + Power/SD (~$20) + Peripherals (~$80) = **~$200 total**.
 
 ### Software Stack
 - **Backend**: Python 3.12 | Streamlit 1.28+ | OpenAI SDK (xAI-compatible).
