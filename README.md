@@ -1,7 +1,7 @@
 # Apex Ωrchestrator
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator.git)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator.git)
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator/)
+[![GitHub forks](https://img.shields.io/github/forks/yourusername/apex-orchestrator?style=social)](https://github.com/buckster123/ApexOrchestrator/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28.0-orange.svg)](https://streamlit.io/)
