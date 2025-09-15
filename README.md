@@ -59,7 +59,7 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
 
 ### Hardware Requirements
 - **Raspberry Pi 5**: 4GB+ RAM (8GB recommended for ChromaDB).
-- **Storage**: 32GB+ microSD (for `./chroma_db/` and `./sandbox/`).
+- **Storage**: NVMe/SSD recommended, or 32GB+ fast SD104 microSD (for `./chroma_db/` and `./sandbox/`).
 - **OS**: Raspberry Pi OS (64-bit, Bookworm or later).
 - **Network**: Ethernet/WiFi for API calls (optional for offline mode).
 
@@ -94,7 +94,7 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
   - `./sandbox/`: Tool workspace.
   - `./prompts/`: Custom system prompts.
 
-### Performance Metrics (Pi 5, 8GB)
+### Performance Metrics (Pi 5, 8GB, NVMe/SSD)
 | Metric | Value | Notes |
 |--------|-------|-------|
 | **Startup Time** | <5s | Includes DB/Chroma init. |
@@ -202,7 +202,7 @@ flowchart TD
 ## 📦 Installation & Setup
 
 ### Prerequisites
-- Raspberry Pi 5 with Raspberry Pi OS (64-bit).
+- Raspberry Pi 5 with Raspberry Pi OS  (64-bit), and SSD/nvme (recommended) or fast sd-card.
 - Python 3.12+ (pre-installed on Pi OS).
 - Git: `sudo apt update && sudo apt install git`.
 
