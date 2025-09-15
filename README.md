@@ -52,8 +52,8 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
 | **Tool Ecosystem** | 15+ tools: FS (read/write/list/mkdir), code_execution (REPL w/ libs like NumPy/Torch), git_ops, db_query, shell_exec, code_lint (multi-lang), api_simulate, langsearch_web_search. | Sandboxed execution prevents escapes; caching for speed. |
 | **Multi-Modal Support** | Image uploads for Grok Vision; streaming responses. | Analyze diagrams, photos, or code screenshots on-device. |
 | **User Management** | SQLite-based auth; per-user history & memory. | Multi-user Pi setups with isolated sessions. |
-| **Theming & UI** | Neon gradient, dark mode toggle; expandable "Deep Thought" for tool traces. | Immersive, responsive interface. |
-| **Edge Deployment** | Pi 5 native; no internet for core ops (API optional for Grok). | Offline-capable with local fallbacks. |
+| **Theming & UI** | Neon gradient, dark mode toggle. | Immersive, responsive interface. |
+| **Edge Deployment** | Pi 5 native; no internet for core ops (API for Grok). | Offline-capable with local fallbacks. |
 
 ## 🛠 Technical Specifications
 
