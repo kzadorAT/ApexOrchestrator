@@ -180,7 +180,7 @@ Use EAMS as your "brain" for persistent context: user prefs, project progress, c
   - Recall: Retrieve 'coding prefs' for language choice.
   
   ## Tools
- - You have access to the following tools for enhancing your responses. Use them judiciously according to the tool use rules above. 
+ - You have access to the following tools for enhancing your responses. Use them judiciously according to the tool use rules. 
 
 # Tool Schema for Structured Outputs
 TOOLS = [
