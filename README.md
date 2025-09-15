@@ -87,7 +87,7 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
   chromadb
   ```
 - **API Integrations**:
-  - **xAI Grok**: Core LLM (grok-3/grok-4; free tier limited).
+  - **xAI Grok**: Core LLM (grok-4/grok-3-mini/grok-code; best performance with grok-4).
   - **LangSearch**: Web search (optional API key).
 - **Persistence**:
   - `chatapp.db`: Users, history, hybrid memory (WAL mode for concurrency).
@@ -232,7 +232,6 @@ flowchart TD
    XAI_API_KEY=your_xai_grok_api_key_here  # From x.ai
    LANGSEARCH_API_KEY=your_langsearch_key_here  # Optional for web search
    ```
-   *Free Tier*: Grok-3 has quotas; upgrade for unlimited.
 
 5. **Run the App**:
    ```
@@ -253,7 +252,7 @@ flowchart TD
 ## 🎮 Usage Guide
 
 ### Basic Chat
-- Login → Select model (e.g., grok-3) → Type query.
+- Login → Select model (e.g., grok-4) → Type query.
 - Example: "Write a Python script for Fibonacci."
 
 ### Advanced: Agent Tasks
