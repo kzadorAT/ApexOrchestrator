@@ -31,6 +31,7 @@ import chromadb  # For vector storage; pip install chromadb
 import uuid  # For unique IDs
 import html  # Add this import at the top of the script if not already present
 from settings import get_settings
+from repositories import UserRepository, HistoryRepository, MemoryRepository
 
 # Load environment variables via Settings module
 settings = get_settings()
@@ -79,6 +80,11 @@ try:
 except sqlite3.OperationalError:
     pass  # Does not exist
 conn.commit()
+
+# Repository layer (SQLite)
+user_repo = UserRepository(conn, c)
+history_repo = HistoryRepository(conn, c)
+memory_repo = MemoryRepository(conn, c)
 
 # ChromaDB Setup for vectors
 if 'chroma_client' not in st.session_state:
@@ -379,8 +385,7 @@ def memory_insert(user: str, convo_id: int, mem_key: str, mem_value: dict) -> st
     """Insert/update memory key-value (value as dict, stored as JSON). Syncs to DB."""
     try:
         json_value = json.dumps(mem_value)
-        c.execute("INSERT OR REPLACE INTO memory (user, convo_id, mem_key, mem_value) VALUES (?, ?, ?, ?)",
-                  (user, convo_id, mem_key, json_value))
+        memory_repo.upsert_value(user, convo_id, mem_key, json_value)
         # Defer commit to caller for batching
         # Update cache
         cache_key = f"{user}:{convo_id}:{mem_key}"
@@ -401,19 +406,15 @@ def memory_query(user: str, convo_id: int, mem_key: str = None, limit: int = 10)
             cached = st.session_state['memory_cache'].get(cache_key)
             if cached:
                 return json.dumps(cached)  # Fast RAM hit
-            c.execute("SELECT mem_value FROM memory WHERE user=? AND convo_id=? AND mem_key=? ORDER BY timestamp DESC LIMIT 1",
-                      (user, convo_id, mem_key))
-            result = c.fetchone()
-            if result:
-                value = json.loads(result[0])
+            result_json = memory_repo.get_value(user, convo_id, mem_key)
+            if result_json:
+                value = json.loads(result_json)
                 st.session_state['memory_cache'][cache_key] = value  # Cache for next
                 return json.dumps(value)
             return "Not found."
         else:
             # Recent entries (no specific key)
-            c.execute("SELECT mem_key, mem_value FROM memory WHERE user=? AND convo_id=? ORDER BY timestamp DESC LIMIT ?",
-                      (user, convo_id, limit))
-            results = c.fetchall()
+            results = memory_repo.get_recent(user, convo_id, limit)
             output = {row[0]: json.loads(row[1]) for row in results}
             # Cache them
             for k, v in output.items():
@@ -439,13 +440,10 @@ def advanced_memory_consolidate(user: str, convo_id: int, mem_key: str, interact
         semantic_value = {"summary": summary}
         json_semantic = json.dumps(semantic_value)
         salience = 1.0
-        c.execute("INSERT OR REPLACE INTO memory (user, convo_id, mem_key, mem_value, salience, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-                  (user, convo_id, f"{mem_key}_semantic", json_semantic, salience, datetime.now()))
-        parent_id = c.lastrowid
+        parent_id = memory_repo.insert_semantic(user, convo_id, f"{mem_key}_semantic", json_semantic, salience, datetime.now())
         # Store episodic (full data) as child
         json_episodic = json.dumps(interaction_data)
-        c.execute("INSERT OR REPLACE INTO memory (user, convo_id, mem_key, mem_value, salience, parent_id, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                  (user, convo_id, mem_key, json_episodic, salience, parent_id, datetime.now()))
+        memory_repo.insert_episodic(user, convo_id, mem_key, json_episodic, salience, parent_id, datetime.now())
         # Defer commit
         # Upsert to Chroma if ready
         embed_model = st.session_state.get('embed_model')
@@ -489,9 +487,7 @@ def advanced_memory_retrieve(user: str, convo_id: int, query: str, top_k: int = 
         chroma_col = st.session_state.get('chroma_collection')
         if not embed_model or not chroma_ready or not chroma_col:
             # Fallback: Retrieve by timestamp
-            c.execute("SELECT mem_key, mem_value, salience FROM memory WHERE user=? AND convo_id=? ORDER BY timestamp DESC LIMIT ?",
-                      (user, convo_id, top_k))
-            results = c.fetchall()
+            results = memory_repo.get_recent_with_salience(user, convo_id, top_k)
             retrieved = []
             for row in results:
                 mem_key, mem_value_json, salience = row
@@ -529,10 +525,8 @@ def advanced_memory_prune(user: str, convo_id: int) -> str:
     try:
         decay_factor = 0.99
         one_week_ago = datetime.now() - timedelta(days=7)
-        c.execute("UPDATE memory SET salience = salience * ? WHERE user=? AND convo_id=? AND timestamp < ?",
-                  (decay_factor, user, convo_id, one_week_ago))
-        c.execute("DELETE FROM memory WHERE user=? AND convo_id=? AND salience < 0.1",
-                  (user, convo_id))
+        memory_repo.decay_salience(user, convo_id, decay_factor, one_week_ago)
+        memory_repo.delete_low_salience(user, convo_id, 0.1)
         # Chroma prune if ready
         chroma_ready = st.session_state.get('chroma_ready', False)
         chroma_col = st.session_state.get('chroma_collection')
@@ -1207,9 +1201,8 @@ def login_page():
             password = st.text_input("Password", type="password", key="login_pass")
             submitted = st.form_submit_button("Login")
             if submitted:
-                c.execute("SELECT password FROM users WHERE username=?", (username,))
-                result = c.fetchone()
-                if result and verify_password(result[0], password):
+                stored_hash = user_repo.get_password(username)
+                if stored_hash and verify_password(stored_hash, password):
                     st.session_state['logged_in'] = True
                     st.session_state['user'] = username
                     st.success(f"Logged in as {username}!")
@@ -1222,13 +1215,11 @@ def login_page():
             new_pass = st.text_input("New Password", type="password", key="reg_pass")
             reg_submitted = st.form_submit_button("Register")
             if reg_submitted:
-                c.execute("SELECT * FROM users WHERE username=?", (new_user,))
-                if c.fetchone():
+                if user_repo.user_exists(new_user):
                     st.error("Username already exists.")
                 else:
                     hashed = hash_password(new_pass)
-                    c.execute("INSERT INTO users VALUES (?, ?)", (new_user, hashed))
-                    conn.commit()
+                    user_repo.create_user(new_user, hashed)
                     st.success("Registered! Please login.")
 
 # Chat Page - Fixed history save, prompt cache, always show response
@@ -1299,11 +1290,7 @@ def chat_page():
             )
         st.header("Chat History")
         search_term = st.text_input("Search History")
-        c.execute(
-            "SELECT convo_id, title FROM history WHERE user=?",
-            (st.session_state["user"],),
-        )
-        histories = c.fetchall()
+        histories = history_repo.list_by_user(st.session_state["user"])
         filtered_histories = [
             h for h in histories if search_term.lower() in h[1].lower()
         ]
@@ -1371,27 +1358,22 @@ def chat_page():
         messages_json = json.dumps(st.session_state['messages'])
         current_convo_id = st.session_state.get('current_convo_id')
         if current_convo_id is None:
-            c.execute("INSERT INTO history (user, title, messages) VALUES (?, ?, ?)",
-                      (st.session_state['user'], title, messages_json))
-            conn.commit()
-            st.session_state['current_convo_id'] = c.lastrowid
+            new_id = history_repo.insert_history(st.session_state['user'], title, messages_json)
+            st.session_state['current_convo_id'] = new_id
         else:
-            c.execute("UPDATE history SET title=?, messages=? WHERE convo_id=?",
-                      (title, messages_json, current_convo_id))
-            conn.commit()
+            history_repo.update_history(current_convo_id, title, messages_json)
 
 # Load History - Unchanged
 def load_history(convo_id):
-    c.execute("SELECT messages FROM history WHERE convo_id=?", (convo_id,))
-    messages = json.loads(c.fetchone()[0])
+    result_json = history_repo.get_messages(convo_id)
+    messages = json.loads(result_json) if result_json else []
     st.session_state['messages'] = messages
     st.session_state['current_convo_id'] = convo_id
     st.rerun()
 
 # Delete History - Unchanged
 def delete_history(convo_id):
-    c.execute("DELETE FROM history WHERE convo_id=?", (convo_id,))
-    conn.commit()
+    history_repo.delete_history(convo_id)
     st.rerun()
 
 # Main App with Init Time Check - Unchanged
