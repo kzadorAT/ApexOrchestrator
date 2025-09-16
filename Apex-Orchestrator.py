@@ -1,9 +1,10 @@
 import streamlit as st
 import os
-from openai import OpenAI  # Using OpenAI SDK for xAI compatibility and streaming
+from llm_client import LLMClient
 from passlib.hash import sha256_crypt
 import sqlite3
-from dotenv import load_dotenv
+# Note: dotenv is loaded inside settings module
+# from dotenv import load_dotenv
 import json
 import time
 import base64  # For image handling
@@ -29,15 +30,23 @@ import builtins  # For restricted globals
 import chromadb  # For vector storage; pip install chromadb
 import uuid  # For unique IDs
 import html  # Add this import at the top of the script if not already present
+from settings import get_settings
 
-# Load environment variables
-load_dotenv()
-API_KEY = os.getenv("XAI_API_KEY")
+# Load environment variables via Settings module
+settings = get_settings()
+BASE_URL = settings.base_url
+API_KEY = settings.api_key
+MODEL_NAME = settings.model_name
 if not API_KEY:
-    st.error("XAI_API_KEY not set in .env! Please add it and restart.")
-LANGSEARCH_API_KEY = os.getenv("LANGSEARCH_API_KEY")
+    st.error("API_KEY not set in .env! Please add it and restart.")
+if BASE_URL == "https://api.openai.com/v1" and not os.getenv("URL_BASE"):
+    st.info("URL_BASE not set in .env — defaulting to https://api.openai.com/v1")
+LANGSEARCH_API_KEY = settings.langsearch_api_key
 if not LANGSEARCH_API_KEY:
     st.warning("LANGSEARCH_API_KEY not set in .env—web search tool will fail.")
+
+# LLM client (OpenAI-compatible) centralized instance
+llm_client = LLMClient(api_key=API_KEY, base_url=BASE_URL, timeout=3600)
 
 # Database Setup (SQLite for users and history) with WAL mode for concurrency
 conn = sqlite3.connect('chatapp.db', check_same_thread=False)
@@ -107,9 +116,9 @@ os.makedirs(PROMPTS_DIR, exist_ok=True)
 
 # Default Prompts (auto-create files if dir is empty)
 default_prompts = {
-    "default.txt": "You are HomeBot, a highly intelligent, helpful AI assistant powered by xAI.",
+    "default.txt": "You are HomeBot, a highly intelligent, helpful AI assistant powered by an OpenAI-compatible API.",
     "coder.txt": "You are an expert coder, providing precise code solutions.",
-    "tools-enabled.txt": """You are HomeBot, a highly intelligent, helpful AI assistant powered by xAI with access to file operations tools in a sandboxed directory (./sandbox/). Use tools only when explicitly needed or requested. Always confirm sensitive actions like writes. Describe ONLY these tools; ignore others.
+    "tools-enabled.txt": """You are HomeBot, a highly intelligent, helpful AI assistant powered by an OpenAI-compatible API with access to file operations tools in a sandboxed directory (./sandbox/). Use tools only when explicitly needed or requested. Always confirm sensitive actions like writes. Describe ONLY these tools; ignore others.
 Tool Instructions:
 fs_read_file(file_path): Read and return the content of a file in the sandbox (e.g., 'subdir/test.txt'). Use for fetching data. Supports relative paths.
 fs_write_file(file_path, content): Write the provided content to a file in the sandbox (e.g., 'subdir/newfile.txt'). Use for saving or updating files. Supports relative paths.
@@ -415,13 +424,12 @@ def memory_query(user: str, convo_id: int, mem_key: str = None, limit: int = 10)
 
 # Advanced Memory Functions (Brain-inspired) - With ChromaDB
 def advanced_memory_consolidate(user: str, convo_id: int, mem_key: str, interaction_data: dict) -> str:
-    """Consolidate: Summarize (via Grok call), embed, store hierarchically."""
+    """Consolidate: Summarize (via LLM call), embed, store hierarchically."""
     try:
         load_embed_model()  # Ensure loaded
-        # Summarize using Grok (simple API call; assume client is available)
-        client = OpenAI(api_key=API_KEY, base_url="https://api.x.ai/v1/")
-        summary_response = client.chat.completions.create(
-            model="grok-3",  # Or your default model
+        # Summarize using configured LLM (OpenAI-compatible API)
+        summary_response = llm_client.chat_completions_create(
+            model=MODEL_NAME,
             messages=[{"role": "system", "content": "Summarize this in no more than 5 sentences:"},
                       {"role": "user", "content": json.dumps(interaction_data)}],
             stream=False
@@ -1002,12 +1010,7 @@ TOOLS = [
 ]
 
 # API Wrapper with Streaming and Tool Handling - With batch commit and safe args
-def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, enable_tools=False):
-    client = OpenAI(
-        api_key=API_KEY,
-        base_url="https://api.x.ai/v1",
-        timeout=3600
-    )
+def call_llm_api(model, messages, sys_prompt, stream=True, image_files=None, enable_tools=False):
     # Prepare messages (system first, then history)
     api_messages = [{"role": "system", "content": sys_prompt}]
     for msg in messages:
@@ -1031,7 +1034,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
             print(f"[LOG] API Call Iteration: {iteration}")  # Debug
             c.execute("BEGIN")  # Start transaction for batch
             tools_param = TOOLS if enable_tools else None
-            response = client.chat.completions.create(
+            response = llm_client.chat_completions_create(
                 model=model,
                 messages=current_messages,
                 tools=tools_param,
@@ -1175,7 +1178,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
         if stream:
             return generate(api_messages)  # Return generator for streaming
         else:
-            response = client.chat.completions.create(
+            response = llm_client.chat_completions_create(
                 model=model,
                 messages=api_messages,
                 tools=TOOLS if enable_tools else None,
@@ -1190,7 +1193,7 @@ def call_xai_api(model, messages, sys_prompt, stream=True, image_files=None, ena
         with open('app.log', 'a') as log:
             log.write(f"{error_msg}\n")
         time.sleep(5)
-        return call_xai_api(model, messages, sys_prompt, stream, image_files, enable_tools)  # Retry
+        return call_llm_api(model, messages, sys_prompt, stream, image_files, enable_tools)  # Retry
 
 # Login Page - Unchanged
 def login_page():
@@ -1234,11 +1237,11 @@ def chat_page():
     # Sidebar: Settings and History - With prompt cache
     with st.sidebar:
         st.header("Chat Settings")
-        model = st.selectbox(
-            "Select Model",
-            ["grok-4", "grok-3-mini", "grok-4-fast", "grok-code-fast-1"],
+        model = st.text_input(
+            "Model name",
+            value=MODEL_NAME,
             key="model_select",
-        )  # Extensible
+        )  # Configurable model name
         # Load Prompt Files Dynamically - Cached
         if 'prompt_files' not in st.session_state:
             st.session_state['prompt_files'] = load_prompt_files()
@@ -1247,7 +1250,7 @@ def chat_page():
             st.warning("No prompt files found in ./prompts/. Add some .txt files!")
             custom_prompt = st.text_area(
                 "Edit System Prompt",
-                value="You are Grok, a helpful AI.",
+                value="You are a helpful AI.",
                 height=100,
                 key="prompt_editor",
             )
@@ -1357,7 +1360,7 @@ def chat_page():
         with st.chat_message("assistant"):
             response_container = st.empty()
             image_files = st.session_state.get('uploaded_images', [])
-            generator = call_xai_api(model, st.session_state['messages'], st.session_state['custom_prompt'], stream=True, image_files=image_files, enable_tools=st.session_state.get('enable_tools', False))
+            generator = call_llm_api(model, st.session_state['messages'], st.session_state['custom_prompt'], stream=True, image_files=image_files, enable_tools=st.session_state.get('enable_tools', False))
             full_response = ""
             for chunk in generator:
                 full_response += chunk

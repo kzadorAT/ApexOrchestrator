@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# Environments
+.env
+.env.*.local
+.venv/
+venv/
+env/
+.venv*/
+*.venv/
+pip-wheel-metadata/
+.ipynb_checkpoints/
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# App artifacts
+chatapp.db
+*.sqlite3
+*.db
+app.log
+logs/
+sandbox/
+chroma_db/
+
+# Streamlit
+.streamlit/
+
+# Cache
+.cache/
+__pypackages__/
+
+# PyInstaller
+*.spec
+
+# Node (if any)
+node_modules/

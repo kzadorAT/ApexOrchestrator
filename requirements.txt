@@ -1,0 +1,16 @@
+streamlit
+openai>=1.30.0
+passlib
+python-dotenv
+ntplib
+pygit2
+requests
+black
+numpy
+sentence-transformers
+torch
+jsbeautifier
+pyyaml
+sqlparse
+beautifulsoup4
+chromadb

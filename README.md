@@ -6,9 +6,9 @@
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28.0-orange.svg)](https://streamlit.io/)
 [![Raspberry Pi 5](https://img.shields.io/badge/Raspberry%20Pi-5-green.svg)](https://www.raspberrypi.com/products/raspberry-pi-5/)
-[![xAI Grok](https://img.shields.io/badge/xAI-Grok%20API-purple.svg)](https://x.ai/)
 
-- **Agents for Everyone**: A $200 Raspberry Pi 5 setup + xAI API key = Your personal open-source RAG-powered AI agent platform. Run autonomous, tool-equipped agents locally with sandboxed execution, vector memory, and ReAct reasoning—all without cloud lock-in.
+
+- **Agents for Everyone**: A $200 Raspberry Pi 5 setup + an OpenAI-compatible API key = Your personal open-source RAG-powered AI agent platform. Run autonomous, tool-equipped agents locally with sandboxed execution, vector memory, and ReAct reasoning—all without cloud lock-in.
 
 <div align="center">
   <img src="https://github.com/buckster123/ApexOrchestrator/blob/main/apex_logo.png" alt="Hero Image">
@@ -19,7 +19,7 @@
 Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minutes. Apex Orchestrator is a Streamlit-based chat app that powers **Apex**, a versatile ReAct-style agent for tasks like code generation, data analysis, web research, and file management. It's designed for edge computing: low-cost, privacy-focused, and infinitely extensible.
 
 ### Why Apex Ωrchestrator?
-- **Affordable Entry**: ~$200 for a Pi 5 (8GB) + peripherals. No GPUs needed—leverages xAI's Grok API for heavy lifting.
+- **Affordable Entry**: ~$200 for a Pi 5 (8GB) + peripherals. No GPUs needed—use any OpenAI-compatible API for heavy lifting.
 - **Open-Source RAG Core**: Hybrid memory (SQLite + ChromaDB vectors) for Retrieval-Augmented Generation (RAG). Semantic search, hierarchical consolidation, and auto-pruning keep your agent's "brain" sharp.
 - **Tool Sandbox**: Secure FS ops, Git, DB queries, code REPL, web search— all confined to `./sandbox/`.
 - **Multi-Agent Simulation**: Internally simulates 1 main + 3-5 subagents (Retriever, Reasoner, Generator, etc.) for robust task decomposition.
@@ -50,10 +50,10 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
 | **ReAct Reasoning** | Cycles through Think-Act-Observe-Reflect for autonomous task solving. | Reduces hallucinations; handles complex, multi-step queries. |
 | **RAG Memory System** | SQLite for key-value + ChromaDB for vector embeddings (all-MiniLM-L6-v2). | Semantic recall, salience scoring, auto-pruning for efficient long-term memory. |
 | **Tool Ecosystem** | 15+ tools: FS (read/write/list/mkdir), code_execution (REPL w/ libs like NumPy/Torch), git_ops, db_query, shell_exec, code_lint (multi-lang), api_simulate, langsearch_web_search. | Sandboxed execution prevents escapes; caching for speed. |
-| **Multi-Modal Support** | Image uploads for Grok Vision; streaming responses. | Analyze diagrams, photos, or code screenshots on-device. |
+| **Multi-Modal Support** | Image uploads for vision-capable models; streaming responses. | Analyze diagrams, photos, or code screenshots on-device. |
 | **User Management** | SQLite-based auth; per-user history & memory. | Multi-user Pi setups with isolated sessions. |
 | **Theming & UI** | Neon gradient, dark mode toggle. | Immersive, responsive interface. |
-| **Edge Deployment** | Pi 5 native; no internet for core ops (API for Grok). | Offline-capable with local fallbacks. |
+| **Edge Deployment** | Pi 5 native; no internet for core ops (API for LLM). | Offline-capable with local fallbacks. |
 
 ## 🛠 Technical Specifications
 
@@ -86,7 +86,7 @@ Transform your Raspberry Pi 5 into a full-fledged AI agent hub in under 10 minut
   chromadb
   ```
 - **API Integrations**:
-  - **xAI Grok**: Core LLM (grok-4/grok-3-mini/grok-code; best performance with grok-4).
+  - **LLM**: Use your preferred OpenAI-compatible model (e.g., gpt-4o-mini, llama.cpp server, vLLM endpoints).
   - **LangSearch**: Web search (optional API key).
 - **Persistence**:
   - `chatapp.db`: Users, history, hybrid memory (WAL mode for concurrency).
@@ -120,7 +120,7 @@ sequenceDiagram
     participant S3 as Subagent 3 (Generator)
     participant T as Tools (FS/Code/Memory/Web)
     participant M as Memory (RAG)
-    participant G as Grok API
+    participant G as LLM API (OpenAI-compatible)
 
     U->>A: Query (e.g., "Analyze sales data")
     A->>A: Task Init (ToT: Decompose to subtasks)
@@ -169,7 +169,7 @@ graph TD
     S3 --> T
     S4 --> T
     S5 --> M
-    A --> G["Grok API\n(Reasoning Boost)"]
+    A --> G["LLM API\n(OpenAI-compatible)"]
     M --> A
     T --> A
     style A fill:#4e54c8
@@ -178,7 +178,7 @@ graph TD
 
 ### Python Logic in Mermaid
 
-Core API call loop (from `call_xai_api` function) as a flowchart:
+Core API call loop (from `call_llm_api` function) as a flowchart:
 
 ```mermaid
 flowchart TD
@@ -228,13 +228,15 @@ flowchart TD
 4. **Configure Environment**:
    Create `.env`:
    ```
-   XAI_API_KEY=your_xai_grok_api_key_here  # From x.ai
+   URL_BASE=https://api.openai.com/v1
+   API_KEY=your_openai_or_compatible_api_key_here
+   MODEL_NAME=gpt-4o-mini
    LANGSEARCH_API_KEY=your_langsearch_key_here  # Optional for web search
    ```
 
 5. **Run the App**:
    ```
-   streamlit run app.py
+   streamlit run F:\Repos Cline\ApexOrchestrator\Apex-Orchestrator.py
    ```
    Access at `http://localhost:8501` (or Pi IP:8501 from another device).
 
@@ -251,7 +253,7 @@ flowchart TD
 ## 🎮 Usage Guide
 
 ### Basic Chat
-- Login → Select model (e.g., grok-4) → Type query.
+- Login → Select model (e.g., gpt-4o-mini) → Type query.
 - Example: "Write a Python script for Fibonacci."
 
 ### Advanced: Agent Tasks
@@ -270,13 +272,13 @@ flowchart TD
 ## 🔍 Deep Dive: The Agent & Platform
 
 ### The "$200 Pi-5 Setup + API Key Only" Concept
-Apex Orchestrator democratizes AI agents: No PhD, no datacenter—just a Pi 5, a $10 API key, and open-source code. It's RAG at the edge: Retrieve (web/memory), Augment (tools), Generate (Grok-powered). Run it headless as a service (`nohup streamlit run app.py &`) for a personal AI butler. Privacy? All local except API calls. Scalable? Cluster Pis via Docker Swarm for multi-agent swarms.
+Apex Orchestrator democratizes AI agents: No PhD, no datacenter—just a Pi 5, a $10 API key, and open-source code. It's RAG at the edge: Retrieve (web/memory), Augment (tools), Generate (LLM-powered). Run it headless as a service (`nohup streamlit run app.py &`) for a personal AI butler. Privacy? All local except API calls. Scalable? Cluster Pis via Docker Swarm for multi-agent swarms.
 
 ### Apex: The ReAct-Like Agent
 **Apex Orchestrator** is a simulated multi-agent system in one LLM call. Core: **ReAct** (Yao et al., 2022) for grounded reasoning—**Think** (plan via CoT/ToT), **Act** (tool call), **Observe** (parse output), **Reflect** (score <0.7? Retry). 
 
 - **Why ReAct?** Breaks loops: Batches tools (e.g., read + execute + write in one iter); limits to 5 cycles.
-- **RAG Integration**: Before acting, `advanced_memory_retrieve` pulls top-k similar contexts (cosine sim). Consolidate post-task: Episodic (full log) + Semantic (Grok-summary) hierarchy.
+- **RAG Integration**: Before acting, `advanced_memory_retrieve` pulls top-k similar contexts (cosine sim). Consolidate post-task: Episodic (full log) + Semantic (LLM-summary) hierarchy.
 - **Subagents**: Internal personas (no extra API cost):
   - **Retriever**: Semantic/web fetch (e.g., `langsearch_web_search` w/ freshness="oneWeek").
   - **Reasoner**: Compute branches (e.g., `code_execution` for sims).
